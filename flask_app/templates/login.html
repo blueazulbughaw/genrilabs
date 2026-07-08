@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Deliberately generic title + noindex: this page should be invisible -->
+  <title>Sign in</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+</head>
+<body class="login-body">
+
+  <div class="login-card">
+    <div class="login-card__brand">
+      <svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M10 17 V11 M10 11 L5 6 M10 11 L15 6 M5 6 V3 M15 6 H17"
+              stroke="#5EC4C4" stroke-width="1.5" fill="none"/>
+        <circle cx="10" cy="17" r="1.5" fill="#5EC4C4"/>
+        <circle cx="5" cy="3" r="1.5" fill="#5EC4C4"/>
+        <circle cx="17" cy="6" r="1.5" fill="#5EC4C4"/>
+      </svg>
+      <span>Genri Labs admin</span>
+    </div>
+
+    <label for="username">Username</label>
+    <input id="username" type="text" autocomplete="username" />
+
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" />
+
+    <button id="login-btn" class="btn-accent" type="button">Sign in</button>
+    <p id="login-error" class="login-error" role="alert" hidden></p>
+  </div>
+
+  <script>
+    // Submit credentials to the JWT endpoint; on success the server
+    // sets the httpOnly cookie and we move to the dashboard.
+    const btn = document.getElementById("login-btn");
+    const err = document.getElementById("login-error");
+
+    async function submitLogin() {
+      err.hidden = true;
+      btn.disabled = true;
+      btn.textContent = "Signing in…";
+      try {
+        const res = await fetch("api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          window.location.href = data.redirect; // → dashboard
+        } else {
+          err.textContent = data.error || "Sign in failed.";
+          err.hidden = false;
+        }
+      } catch {
+        err.textContent = "Network error. Try again.";
+        err.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign in";
+      }
+    }
+
+    btn.addEventListener("click", submitLogin);
+    // Enter key submits from either field
+    document.querySelectorAll("input").forEach((el) =>
+      el.addEventListener("keydown", (e) => e.key === "Enter" && submitLogin())
+    );
+  </script>
+</body>
+</html>

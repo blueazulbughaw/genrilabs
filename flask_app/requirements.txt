@@ -1,0 +1,7 @@
+# GENRI LABS — Python dependencies
+# Pin versions so the cPanel install matches your local dev exactly.
+Flask==3.0.3
+PyJWT==2.9.0
+bcrypt==4.2.0
+PyMySQL==1.1.1
+python-dotenv==1.0.1

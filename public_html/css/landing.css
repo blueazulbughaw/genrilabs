@@ -1,0 +1,242 @@
+/* ============================================================
+   GENRI LABS — LANDING PAGE STYLES
+   All color values come from tokens.css. Layout is mobile-first;
+   breakpoints at 640px (tablet) and 960px (desktop).
+   ============================================================ */
+
+* { box-sizing: border-box; margin: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--color-text);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
+h2 { font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: var(--space-3); }
+h3 { font-size: 1.05rem; margin-bottom: var(--space-1); }
+
+h1 em { color: var(--color-accent); font-style: normal; }
+
+a { color: var(--color-accent); text-decoration: none; }
+a:focus-visible, .btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* ---------------- Buttons ---------------- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-sm);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+
+/* Rule from the palette spec: near-black text on aqua, never white */
+.btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+.btn--ghost  { border: 1px solid var(--color-border); color: var(--color-text-body); }
+.btn--ghost:hover { background: var(--color-surface); }
+.btn--lg { padding: 0.85rem 1.75rem; font-size: 1rem; }
+
+/* ---------------- Nav ---------------- */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 1rem var(--space-3);
+  border-bottom: 0.5px solid var(--color-border-soft);
+  position: sticky;
+  top: 0;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+.nav__links { display: none; gap: var(--space-3); }
+.nav__links a { color: var(--color-text-muted); font-size: 0.9rem; }
+.nav__links a:hover { color: var(--color-text); }
+
+@media (min-width: 640px) {
+  .nav__links { display: flex; }
+}
+
+/* ---------------- Hero ---------------- */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: var(--space-5) var(--space-3) var(--space-4);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  overflow: hidden;
+}
+.hero__trace {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 140px;
+  pointer-events: none;
+}
+.badge {
+  display: inline-block;
+  border: 0.5px solid var(--color-border);
+  color: var(--color-info);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-2);
+}
+.hero__sub {
+  color: var(--color-text-muted);
+  max-width: 520px;
+  margin: var(--space-2) auto var(--space-3);
+}
+.hero__cta { display: flex; gap: var(--space-2); justify-content: center; flex-wrap: wrap; }
+
+/* 3D stage for the rotating hero card. perspective on the parent
+   is what makes rotateY read as depth instead of a flat skew. */
+.hero__stage { perspective: 1000px; margin-top: var(--space-4); }
+.hero__card {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  max-width: 720px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.hero__card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+}
+
+/* ---------------- Stats ---------------- */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 0.5px solid var(--color-border-soft);
+  border-bottom: 0.5px solid var(--color-border-soft);
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.stats__item {
+  padding: var(--space-3);
+  text-align: center;
+  border-bottom: 0.5px solid var(--color-border-soft);
+}
+.stats__item:last-child { border-bottom: none; }
+.stats__num {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+.stats__label { color: var(--color-text-muted); font-size: 0.85rem; }
+
+@media (min-width: 640px) {
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .stats__item { border-bottom: none; border-right: 0.5px solid var(--color-border-soft); }
+  .stats__item:last-child { border-right: none; }
+}
+
+/* ---------------- Sections ---------------- */
+.section {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-3);
+}
+.section--narrow { max-width: 680px; text-align: center; }
+.eyebrow {
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+}
+.prose { color: var(--color-text-muted); }
+.prose em { color: var(--color-accent); font-style: normal; }
+
+/* ---------------- Cards ---------------- */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+@media (min-width: 640px)  { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px)  { .cards { grid-template-columns: repeat(3, 1fr); }
+                             .cards--two { grid-template-columns: repeat(2, 1fr); } }
+
+.card {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.card:hover { border-color: var(--color-accent-dark); transform: translateY(-2px); }
+.card p { color: var(--color-text-muted); font-size: 0.92rem; margin-bottom: var(--space-2); }
+
+.card__icon {
+  width: 42px; height: 42px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-2);
+}
+.card__icon svg { width: 22px; height: 22px; }
+.card__icon--aqua { background: var(--color-accent-dim); color: var(--color-accent); }
+.card__icon--blue { background: var(--color-info-dim);  color: var(--color-info); }
+
+.card__link { font-size: 0.85rem; }
+.card__link--blue, .card__title--blue { color: var(--color-info); }
+
+/* ---------------- Contact + footer ---------------- */
+.contact .btn { margin-top: var(--space-3); }
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-top: 0.5px solid var(--color-border-soft);
+  color: var(--color-text-faint);
+  font-size: 0.8rem;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* ---------------- Reduced motion ----------------
+   landing.js also checks this, but the CSS guard means
+   nothing jumps even before JS loads. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}

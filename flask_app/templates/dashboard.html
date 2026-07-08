@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Genri Labs</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+</head>
+<body>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <span class="topbar__title">
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M10 17 V11 M10 11 L5 6 M10 11 L15 6 M5 6 V3 M15 6 H17" stroke="#5EC4C4" stroke-width="1.5" fill="none"/>
+        <circle cx="10" cy="17" r="1.5" fill="#5EC4C4"/><circle cx="5" cy="3" r="1.5" fill="#5EC4C4"/><circle cx="17" cy="6" r="1.5" fill="#5EC4C4"/>
+      </svg>
+      Genri Labs admin
+    </span>
+    <div class="topbar__right">
+      <!-- Session countdown, driven by the gl_token_exp cookie -->
+      <span class="session-pill" id="session-pill" title="Time until automatic sign-out">
+        Session · <span id="session-countdown">--:--</span>
+      </span>
+      <button class="btn-ghost" id="logout-btn" type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="dash">
+
+    <!-- ============ METRIC CARDS (totals, auto-filled) ============ -->
+    <section class="metric-grid" aria-label="Summary metrics">
+      <div class="metric-card">
+        <p class="metric-card__label">Hours logged (total)</p>
+        <p class="metric-card__value" data-total="hours_logged">—</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-card__label">Outreach sent (total)</p>
+        <p class="metric-card__value" data-total="outreach_sent">—</p>
+      </div>
+    </section>
+
+    <!-- ============ CHART SLOTS ============
+         To add a chart: copy a .chart-card, give the canvas a new id,
+         and register it in the CHARTS config at the top of dashboard.js.
+         That's the whole extension process. -->
+    <section class="chart-grid" aria-label="Charts">
+      <div class="chart-card">
+        <h2>Weekly hours logged</h2>
+        <div class="chart-card__body"><canvas id="chart-hours"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h2>Activity by category</h2>
+        <div class="chart-card__body"><canvas id="chart-activity"></canvas></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Chart.js from cdnjs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script>
+    // Passed from Flask config: where to send the user when the session ends.
+    window.PUBLIC_SITE_URL = {{ public_site | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

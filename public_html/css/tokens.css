@@ -1,0 +1,53 @@
+/* ============================================================
+   GENRI LABS — DESIGN TOKENS
+   Single source of truth for color, type, spacing, and radii.
+   Both the public landing page and the admin dashboard import
+   this file, so changing a value here restyles the whole site.
+   ============================================================ */
+
+:root {
+  /* ---- Color: ground (blue-leaning greys) ---- */
+  --color-bg:          #0B1014;  /* page background            */
+  --color-surface:     #11181F;  /* cards, panels              */
+  --color-surface-2:   #161F28;  /* raised / hover surfaces    */
+  --color-border:      #1F2A34;  /* hairline card borders      */
+  --color-border-soft: #1A232B;  /* section dividers           */
+
+  /* ---- Color: text ---- */
+  --color-text:        #F0F4F6;  /* headings                   */
+  --color-text-body:   #C6CED4;  /* body copy                  */
+  --color-text-muted:  #8B98A3;  /* captions, secondary        */
+  --color-text-faint:  #5A6773;  /* footer, fine print         */
+
+  /* ---- Color: accents (two max — grey does the rest) ---- */
+  --color-accent:      #5EC4C4;  /* aqua — primary: CTAs, links, stats, active */
+  --color-accent-dim:  #14282B;  /* aqua tint for icon tiles   */
+  --color-accent-dark: #2E8B8B;  /* aqua for LIGHT surfaces (print, docs)      */
+  --color-info:        #6FA8CE;  /* blue — analytical/informational elements   */
+  --color-info-base:   #3D7EA6;  /* blue base (charts, borders)                */
+  --color-info-dim:    #15222E;  /* blue tint for icon tiles   */
+
+  /* ---- Rule: text ON aqua is near-black, never white ---- */
+  --color-on-accent:   #0B1014;
+
+  /* ---- Typography ---- */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  /* ---- Spacing scale ---- */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: 6rem;
+
+  /* ---- Radii ---- */
+  --radius-sm: 6px;    /* buttons                    */
+  --radius-md: 10px;   /* cards, icon tiles          */
+  --radius-lg: 16px;   /* hero image frame           */
+  --radius-pill: 999px;
+
+  /* ---- Layout ---- */
+  --content-max: 1080px;
+}

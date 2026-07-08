@@ -1,0 +1,10 @@
+# Keep secrets and noise out of Claude Code's context
+.env
+*.env
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.zip
+*.log

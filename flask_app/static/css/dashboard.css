@@ -1,0 +1,165 @@
+/* ============================================================
+   GENRI LABS — DASHBOARD + LOGIN STYLES
+   Imports the same tokens.css as the landing page, so the admin
+   area is automatically on-brand. Aqua = primary data series,
+   blue = secondary/comparison series.
+   ============================================================ */
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+h2 {
+  font-family: var(--font-display);
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: var(--space-2);
+}
+
+/* ---------------- Buttons ---------------- */
+.btn-accent {
+  background: var(--color-accent);
+  color: var(--color-on-accent);            /* near-black on aqua, never white */
+  border: none;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.btn-ghost {
+  background: transparent;
+  border: 0.5px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.btn-ghost:hover { color: var(--color-text); border-color: var(--color-text-faint); }
+
+/* ---------------- Top bar ---------------- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem var(--space-3);
+  background: var(--color-surface);
+  border-bottom: 0.5px solid var(--color-border-soft);
+}
+.topbar__title {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+.topbar__right { display: flex; align-items: center; gap: var(--space-2); }
+
+.session-pill {
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+}
+/* JS adds this class when under 2 minutes remain */
+.session-pill--warning { background: #2E1A1A; color: #E08A8A; }
+
+/* ---------------- Dashboard layout ---------------- */
+.dash {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-3);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-2);
+}
+.metric-card {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+}
+.metric-card__label { color: var(--color-text-muted); font-size: 0.8rem; }
+.metric-card__value {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+@media (min-width: 820px) {
+  .chart-grid { grid-template-columns: 1fr 1fr; }
+}
+.chart-card {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+}
+.chart-card__body { position: relative; height: 260px; }
+
+/* ---------------- Login page ---------------- */
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+}
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-3);
+  display: grid;
+  gap: 0.5rem;
+}
+.login-card__brand {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-display);
+  color: var(--color-text);
+  font-weight: 500;
+  margin-bottom: var(--space-2);
+}
+.login-card label {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  margin-top: 0.5rem;
+}
+.login-card input {
+  background: var(--color-bg);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 0.6rem 0.75rem;
+}
+.login-card input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+.login-card .btn-accent { margin-top: var(--space-2); }
+.login-error { color: #E08A8A; font-size: 0.85rem; }
