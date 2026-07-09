@@ -80,8 +80,59 @@ a:focus-visible, .btn:focus-visible {
 .nav__links a { color: var(--color-text-muted); font-size: 0.9rem; }
 .nav__links a:hover { color: var(--color-text); }
 
-@media (min-width: 640px) {
-  .nav__links { display: flex; }
+/* Mobile/tablet: links render as a dropdown panel under the header
+   when the hamburger toggles the .is-open class. */
+.nav__links.is-open {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  background: var(--color-bg);
+  border-bottom: 0.5px solid var(--color-border-soft);
+}
+.nav__links.is-open a { font-size: 1rem; padding: 0.35rem 0; }
+
+/* Hamburger toggle — mobile/tablet only */
+.nav__toggle {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  padding: 7px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.nav__toggle-bar {
+  display: block;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(2) { opacity: 0; }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (min-width: 960px) {
+  .nav__links,
+  .nav__links.is-open {
+    display: flex;
+    flex-direction: row;
+    position: static;
+    padding: 0;
+    background: none;
+    border-bottom: none;
+  }
+  .nav__links.is-open a { font-size: 0.9rem; padding: 0; }
+  .nav__toggle { display: none; }
 }
 
 /* ---------------- Hero ---------------- */

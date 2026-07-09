@@ -14,6 +14,44 @@
 (function () {
   "use strict";
 
+  // Mobile/tablet hamburger menu. Kept outside the reduced-motion
+  // gated IIFE below so it always works regardless of GSAP/motion prefs.
+  const toggle = document.querySelector(".nav__toggle");
+  const links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+
+  const closeMenu = () => {
+    links.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+  };
+
+  toggle.addEventListener("click", () => {
+    const isOpen = links.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  links.addEventListener("click", (e) => {
+    if (e.target.tagName === "A") closeMenu();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!links.classList.contains("is-open")) return;
+    if (!links.contains(e.target) && e.target !== toggle && !toggle.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  // If the viewport grows past the tablet breakpoint, drop any open state.
+  window.matchMedia("(min-width: 960px)").addEventListener("change", closeMenu);
+})();
+
+(function () {
+  "use strict";
+
   // Respect the user's OS-level motion preference. If reduced
   // motion is on, we skip GSAP entirely — content is fully
   // visible by default, animations are progressive enhancement.
