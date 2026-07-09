@@ -45,7 +45,7 @@
       btn.disabled = true;
       btn.textContent = "Signing in…";
       try {
-        const res = await fetch("api/login", {
+        const res = await fetch("{{ url_for('api_login') }}", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

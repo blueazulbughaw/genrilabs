@@ -18,7 +18,7 @@ Security notes:
 import datetime
 
 import bcrypt
-from flask import Flask, render_template, request, jsonify, redirect, make_response
+from flask import Flask, render_template, request, jsonify, redirect, make_response, url_for
 
 from config import Config
 from db import query, execute, close_db
@@ -96,7 +96,9 @@ def api_login():
         return jsonify({"error": "Invalid credentials."}), 401
 
     token, expires = issue_token(username)
-    resp = make_response(jsonify({"ok": True, "redirect": "dashboard"}))
+    # Absolute path via url_for (honors Passenger's mount prefix) so this
+    # works regardless of whether the browser's URL had a trailing slash.
+    resp = make_response(jsonify({"ok": True, "redirect": url_for("dashboard")}))
     return set_auth_cookies(resp, token, expires)
 
 

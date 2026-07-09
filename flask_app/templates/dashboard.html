@@ -64,6 +64,10 @@
   <script>
     // Passed from Flask config: where to send the user when the session ends.
     window.PUBLIC_SITE_URL = {{ public_site | tojson }};
+    // Absolute paths via url_for (honors Passenger's mount prefix) so
+    // dashboard.js doesn't depend on the current URL having a trailing slash.
+    window.API_METRICS_URL = {{ url_for('api_metrics') | tojson }};
+    window.API_LOGOUT_URL = {{ url_for('api_logout') | tojson }};
   </script>
   <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>

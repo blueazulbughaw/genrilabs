@@ -67,7 +67,7 @@
 
   /* -------- Load metrics; a 401 means the JWT died → leave -------- */
   async function loadMetrics() {
-    const res = await fetch("api/metrics");
+    const res = await fetch(window.API_METRICS_URL);
     if (res.status === 401) return goHome();
     const { series, totals } = await res.json();
 
@@ -121,7 +121,7 @@
 
   /* -------- Logout -------- */
   document.getElementById("logout-btn").addEventListener("click", async () => {
-    const res = await fetch("api/logout", { method: "POST" });
+    const res = await fetch(window.API_LOGOUT_URL, { method: "POST" });
     const data = await res.json().catch(() => ({}));
     window.location.href = data.redirect || window.PUBLIC_SITE_URL;
   });
