@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
-  <!-- Genri Labs circuit-tree mark. On light surfaces, swap
-       stroke/fill to #2E8B8B (see tokens.css --color-accent-dark). -->
-  <path d="M10 17 V11 M10 11 L5 6 M10 11 L15 6 M5 6 V3 M15 6 H17"
-        stroke="#5EC4C4" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <circle cx="10" cy="17" r="1.5" fill="#5EC4C4"/>
-  <circle cx="5"  cy="3"  r="1.5" fill="#5EC4C4"/>
-  <circle cx="17" cy="6"  r="1.5" fill="#5EC4C4"/>
-</svg>
