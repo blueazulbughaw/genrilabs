@@ -131,7 +131,11 @@
     window.location.href = data.redirect || window.PUBLIC_SITE_URL;
   });
 
-  /* -------- Boot -------- */
+  /* -------- Boot --------
+     Only an actual 401 (handled inside loadMetrics) means the session
+     died — any other failure (e.g. a chart library that failed to load)
+     is a rendering bug, not an auth problem, and must not kick an
+     otherwise-valid session out to the public site. */
   startSessionWatch();
-  loadMetrics().catch((err) => goHome("loadMetrics failed: " + err));
+  loadMetrics().catch((err) => console.error("[dashboard] failed to load metrics/charts:", err));
 })();
