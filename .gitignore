@@ -16,3 +16,9 @@ venv/
 # cPanel artifacts
 *.log
 tmp/
+
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json
+
+# skillmds canonical store (.claude/skills is the committed copy)
+.agents/

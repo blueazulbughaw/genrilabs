@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "skills": {
+    "epic-design": {
+      "source": "registry:alirezarezvani/epic-design",
+      "commit_sha": "2fb75e1af34f314984a21340edf80f8f402abf55",
+      "digest": "sha256:0ad39ebbf800e681249cdee0d47bbae8c0cf04266ca2a5ec5d60cdbfc0668323",
+      "agents": [
+        "claude-code"
+      ],
+      "mode": {
+        "claude-code": "junction"
+      }
+    },
+    "gpt-taste": {
+      "source": "registry:antigravity/gpt-taste",
+      "commit_sha": "6e69f00a01898251c83e7b024444d82d70cc3b2c",
+      "digest": "sha256:0fc52c75b637f6008d3925193ef64f4af3ba55bf5251c41ed5fc862376180461",
+      "agents": [
+        "claude-code"
+      ],
+      "mode": {
+        "claude-code": "junction"
+      }
+    }
+  }
+}
