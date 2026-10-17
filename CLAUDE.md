@@ -28,6 +28,9 @@ Flask app → `~/genri_admin` via Passenger (`passenger_wsgi.py` is the entry po
 ## Extension points (use these instead of restructuring)
 - New animated element on landing: add `data-anim="float"` (scroll entrance) or
   `data-anim="rise"` (load entrance) — `js/landing.js` picks them up automatically.
+  Also available: `split` (masked word rise), `words` (scroll-lit paragraph),
+  `progress` (scroll-filled line), and `data-depth="0..4"` for hero parallax layers.
+  The full list is in the header comment of `js/landing.js`.
 - New dashboard chart: (1) insert rows with a new `metric_key` into the `metrics` table,
   (2) add a `<canvas>` in `templates/dashboard.html`, (3) add one entry to the `CHARTS`
   array in `static/js/dashboard.js`. The `/api/metrics` endpoint needs no changes.

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Genri Labs — AI automation for teams with a mission</title>
   <meta name="description" content="Genri Labs designs, builds, and maintains AI systems for mission-driven organizations — transparent, documented, and yours to keep." />
+  <link rel="icon" type="image/png" href="assets/logo-96.png" />
 
   <!-- Fonts: Space Grotesk (display) + Inter (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,15 +16,17 @@
   <link rel="stylesheet" href="css/landing.css" />
 </head>
 <body>
+  <a class="skip-link" href="#top">Skip to main content</a>
 
-  <!-- ============ NAV ============ -->
+  <!-- ============ NAV: floating glass pill ============ -->
   <header class="nav" data-anim="nav">
     <a class="nav__brand" href="#top" aria-label="Genri Labs home">
-      <img src="assets/logo.png" alt="" width="22" height="22" />
+      <img src="assets/logo-96.png" alt="" width="22" height="22" />
       <span>Genri Labs</span>
     </a>
     <nav class="nav__links" id="nav-links" aria-label="Primary">
       <a href="#services">Services</a>
+      <a href="#process">Process</a>
       <a href="#work">Work</a>
       <a href="#about">About</a>
     </nav>
@@ -37,108 +40,77 @@
 
   <main id="top">
 
-    <!-- ============ HERO ============ -->
+    <!-- ============ HERO (Attention) ============
+         Depth layers: 0 grid + watermark, 1 glow, 2 circuit traces,
+         3 run-log panel, 4 text. landing.js parallaxes [data-depth]. -->
     <section class="hero">
-      <!-- Circuit trace: the signature motif. Its path "draws" on load. -->
-<svg class="hero__trace"
-     viewBox="0 0 1080 140"
-     preserveAspectRatio="none"
-     aria-hidden="true">
-
-  <defs>
-
-    <linearGradient id="traceGradient" x1="0%" x2="100%">
-      <stop offset="0%" stop-color="var(--color-accent)" stop-opacity=".08"/>
-      <stop offset="50%" stop-color="var(--color-accent)" stop-opacity=".45"/>
-      <stop offset="100%" stop-color="var(--color-accent)" stop-opacity=".08"/>
-    </linearGradient>
-
-    <filter id="traceGlow">
-      <feGaussianBlur stdDeviation="2" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-
-  </defs>
-
-  <!-- LEFT CIRCUIT -->
-
-  <path
-      class="trace"
-      d="
-      M0 92
-      H170
-      V68
-      H300
-      V40
-      H430"
-
-      fill="none"
-      stroke="url(#traceGradient)"
-      stroke-width="1.4"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      filter="url(#traceGlow)"
-  />
-
-  <!-- RIGHT CIRCUIT -->
-
-  <path
-      class="trace"
-      d="
-      M650 40
-      H790
-      V78
-      H930
-      V108
-      H1080"
-
-      fill="none"
-      stroke="url(#traceGradient)"
-      stroke-width="1.4"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      filter="url(#traceGlow)"
-  />
-
-  <!-- Nodes -->
-
-  <circle class="node" cx="170" cy="92" r="2.8"/>
-  <circle class="node" cx="300" cy="68" r="2.8"/>
-  <circle class="node" cx="430" cy="40" r="3.2"/>
-
-  <circle class="node" cx="650" cy="40" r="3.2"/>
-  <circle class="node" cx="790" cy="78" r="2.8"/>
-  <circle class="node" cx="930" cy="108" r="2.8"/>
-
-</svg>
-
-      <span class="badge" data-anim="rise">GENRI · Principled AI, by design</span>
-      <h1 data-anim="rise">AI automation for teams with a <em>mission</em>, not just a metric</h1>
-      <p class="hero__sub" data-anim="rise">
-        We design, build, and maintain AI systems for mission-driven organizations —
-        transparent, documented, and yours to keep.
-      </p>
-      <div class="hero__cta" data-anim="rise">
-        <a class="btn btn--accent" href="#contact">Start a project</a>
-        <a class="btn btn--ghost" href="#services">See our process →</a>
+      <div class="layer depth-0" data-depth="0" aria-hidden="true">
+        <div class="hero__grid"></div>
+        <img class="hero__mark" src="assets/logo-192.png" alt="" width="192" height="192" />
+      </div>
+      <div class="layer depth-1" data-depth="1" aria-hidden="true">
+        <div class="hero__glow"></div>
+      </div>
+      <div class="layer depth-2" data-depth="2" aria-hidden="true">
+        <svg class="hero__trace" viewBox="0 0 1080 140" preserveAspectRatio="none">
+          <path class="trace" data-anim="trace" d="M0 92 H170 V68 H300 V40 H430" />
+          <path class="trace" data-anim="trace" d="M650 40 H790 V78 H930 V108 H1080" />
+          <circle class="node" cx="170" cy="92" r="2.8" />
+          <circle class="node" cx="300" cy="68" r="2.8" />
+          <circle class="node" cx="430" cy="40" r="3.2" />
+          <circle class="node" cx="650" cy="40" r="3.2" />
+          <circle class="node" cx="790" cy="78" r="2.8" />
+          <circle class="node" cx="930" cy="108" r="2.8" />
+        </svg>
       </div>
 
-      <!-- The hero visual: starts rotated in 3D, straightens as you scroll.
-           Swap the inner placeholder for a real screenshot when ready. -->
-      <div class="hero__stage">
+      <div class="hero__content depth-4" data-depth="4">
+        <h1 data-anim="split">AI automation for teams with a <em>mission</em>, not just a metric</h1>
+        <p class="hero__sub" data-anim="rise">
+          We design, build, and maintain AI systems for mission-driven organizations —
+          transparent, documented, and yours to keep.
+        </p>
+        <div class="hero__cta" data-anim="rise">
+          <a class="btn btn--accent btn--lg" href="#contact">Start a project</a>
+          <a class="btn btn--ghost btn--lg" href="#process">See our process →</a>
+        </div>
+      </div>
+
+      <!-- Hero object: an illustrative run log of one automated task.
+           Tilts in 3D and straightens as you scroll (data-anim="hero-card"). -->
+      <div class="hero__stage depth-3" data-depth="3">
         <div class="hero__card" data-anim="hero-card">
-          <div class="hero__card-inner">
-            <img src="assets/logo.png" alt="" width="48" height="48" />
-            <p>Product screenshot goes here</p>
+          <div class="runlog float-loop" role="img"
+               aria-label="Example run log: a request arrives, AI drafts a disclosed reply, your staff approve it, and the decision is documented.">
+            <div class="runlog__bar" aria-hidden="true">
+              <span class="runlog__dot"></span><span class="runlog__dot"></span><span class="runlog__dot"></span>
+              <span class="runlog__title">intake-assistant · run log</span>
+            </div>
+            <ol class="runlog__steps" aria-hidden="true">
+              <li class="runlog__step" data-anim="step">
+                <span class="runlog__tick"></span>
+                <span class="runlog__text">New request received from your web form</span>
+              </li>
+              <li class="runlog__step" data-anim="step">
+                <span class="runlog__tick"></span>
+                <span class="runlog__text">Reply drafted</span>
+                <span class="runlog__tag">AI-assisted · disclosed</span>
+              </li>
+              <li class="runlog__step" data-anim="step">
+                <span class="runlog__tick"></span>
+                <span class="runlog__text">Reviewed and approved by your staff</span>
+              </li>
+              <li class="runlog__step" data-anim="step">
+                <span class="runlog__tick"></span>
+                <span class="runlog__text">Decision logged to your documentation</span>
+              </li>
+            </ol>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ STATS ============ -->
+    <!-- ============ COMMITMENTS ============ -->
     <section class="stats" aria-label="Our commitments">
       <div class="stats__item" data-anim="float">
         <p class="stats__num">100%</p>
@@ -154,25 +126,33 @@
       </div>
     </section>
 
-    <!-- ============ SERVICES ============ -->
+    <!-- ============ SERVICES (Interest): gapless bento ============
+         Desktop 3x2: agents spans 2 cols x 2 rows, the others fill col 3.
+         Tablet 2x2: agents spans the top row. Mobile: one column. -->
     <section class="section" id="services">
-      <p class="eyebrow">What we build</p>
+      <h2 class="section__title" data-anim="float">What we build, and keep running</h2>
 
-      <div class="cards">
-        <!-- Aqua = operational offerings -->
-        <article class="card" data-anim="float">
+      <div class="bento">
+        <article class="card card--feature" data-anim="float">
           <div class="card__icon card__icon--aqua" aria-hidden="true">
-            <!-- robot icon -->
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="11" rx="2"/><path d="M12 8V4M8 13h.01M16 13h.01M9 17h6"/></svg>
           </div>
           <h3>Custom AI agents</h3>
           <p>Purpose-built assistants for intake, admin, and member care — grounded in your data and your values.</p>
+
+          <div class="chat" aria-hidden="true">
+            <p class="chat__msg chat__msg--in">Can I move my intake appointment to Thursday?</p>
+            <p class="chat__msg chat__msg--out">
+              Thursday at 10:00 is open. Want me to book it?
+              <span class="chat__tag">AI-assisted</span>
+            </p>
+          </div>
+
           <a class="card__link" href="#contact">Learn more →</a>
         </article>
 
         <article class="card" data-anim="float">
           <div class="card__icon card__icon--aqua" aria-hidden="true">
-            <!-- code / web icon -->
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13 5l-2 14"/></svg>
           </div>
           <h3>Web development</h3>
@@ -182,62 +162,105 @@
 
         <article class="card" data-anim="float">
           <div class="card__icon card__icon--aqua" aria-hidden="true">
-            <!-- megaphone / broadcast icon -->
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a3 3 0 0 1 0 6M10 8v11l-2-1v-4M4 8h6l8-4v14l-8-4H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/></svg>
           </div>
           <h3>Social media management</h3>
           <p>Content strategy, scheduling, and analytics for brands that want a consistent voice — human-led, AI-assisted.</p>
           <a class="card__link" href="#contact">Learn more →</a>
         </article>
+      </div>
+    </section>
 
+    <!-- ============ PROCESS (Desire): sticky title, steps scroll past ============ -->
+    <section class="section process" id="process">
+      <div class="process__intro">
+        <h2>How a project runs</h2>
+        <p class="prose">Four steps, each one written down. You can see where AI is used, and you can run it without us.</p>
+      </div>
+
+      <div class="process__steps">
+        <div class="process__line" aria-hidden="true"><span data-anim="progress"></span></div>
+
+        <article class="step" data-anim="float">
+          <p class="step__num">01</p>
+          <h3>Listen</h3>
+          <p>Tell us what routine work is eating your team's time. We'll tell you honestly whether AI is the right fix.</p>
+        </article>
+        <article class="step" data-anim="float">
+          <p class="step__num">02</p>
+          <h3>Design</h3>
+          <p>We map the workflow and decide, in writing, where AI helps and where a person stays in charge.</p>
+        </article>
+        <article class="step" data-anim="float">
+          <p class="step__num">03</p>
+          <h3>Build</h3>
+          <p>We build it with every AI touchpoint disclosed to the people it affects.</p>
+        </article>
+        <article class="step" data-anim="float">
+          <p class="step__num">04</p>
+          <h3>Hand over</h3>
+          <p>You get the system, the documentation, and the keys. We stay on to maintain it if you want us to.</p>
+        </article>
       </div>
     </section>
 
     <!-- ============ WORK ============ -->
     <section class="section" id="work">
-      <p class="eyebrow">Selected work</p>
-      <h2>Real products, shipped</h2>
+      <h2 class="section__title" data-anim="float">Real products, shipped</h2>
 
-      <div class="cards cards--two">
-        <article class="card" data-anim="float">
+      <div class="work">
+        <a class="project" href="https://shilohliving.app/" rel="noopener" data-anim="float">
+          <span class="project__domain">shilohliving.app</span>
           <h3>Shiloh Living App</h3>
           <p>A property management platform for landlords and tenants — properties, leases, bills, payments, and tenant communication in one place.</p>
-          <a class="card__link" href="https://shilohliving.app/" rel="noopener">View case study →</a>
-        </article>
-        <article class="card" data-anim="float">
+          <span class="project__link">View project <span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="project" href="https://aiecosystem.gladgallivants.com/" rel="noopener" data-anim="float">
+          <span class="project__domain">aiecosystem.gladgallivants.com</span>
           <h3>AI Ecosystem</h3>
           <p>A searchable intelligence database tracking AI companies, models, benchmarks, and research for professionals and builders.</p>
-          <a class="card__link" href="https://aiecosystem.gladgallivants.com/" rel="noopener">View case study →</a>
-        </article>
+          <span class="project__link">View project <span aria-hidden="true">↗</span></span>
+        </a>
       </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
-    <section class="section section--narrow" id="about">
-      <p class="eyebrow">About</p>
-      <h2>GENRI means first principles</h2>
-      <p class="prose">
+    <!-- ============ ABOUT: words light up as you scroll ============ -->
+    <section class="section about" id="about">
+      <h2 class="about__title" data-anim="float">GENRI means first principles</h2>
+      <p class="about__statement" data-anim="words">
         Genri Labs is built on <em>genri (原理)</em> — the Japanese word for foundational,
         discoverable truth. We believe responsible AI isn't a disclaimer added at the
         end; it's an architectural decision made at the start. Every system we ship is
         transparent about where AI is used, documented so your team can maintain it,
         and owned entirely by you.
       </p>
-
     </section>
 
-    <!-- ============ CONTACT ============ -->
-    <section class="section section--narrow contact" id="contact">
-      <h2>Start with a conversation</h2>
-      <p class="prose">Tell us what routine work is eating your team's time. We'll tell you honestly whether AI is the right fix.</p>
-      <a class="btn btn--accent btn--lg" href="https://calendly.com/genrilabs-info/30min">Schedule a call</a>
-      <a class="btn btn--accent btn--lg" href="tel:+14084750027">Inquire</a>
+    <!-- ============ CONTACT (Action) ============ -->
+    <section class="contact" id="contact">
+      <div class="contact__glow" aria-hidden="true"></div>
+      <h2 class="contact__title" data-anim="float">Start with a conversation</h2>
+      <p class="contact__sub" data-anim="float">Tell us what routine work is eating your team's time. We'll tell you honestly whether AI is the right fix.</p>
+      <div class="contact__cta" data-anim="float">
+        <a class="btn btn--accent btn--xl" href="https://calendly.com/genrilabs-info/30min">Schedule a call</a>
+        <a class="btn btn--ghost btn--xl" href="tel:+14084750027">Call (408) 475-0027</a>
+      </div>
     </section>
   </main>
+
   <!-- ============ FOOTER (note: no admin link anywhere) ============ -->
   <footer class="footer">
-    <span>© 2026 Genri Labs LLC</span>
-    <span>@GenriLabs</span>
+    <a class="footer__brand" href="#top">
+      <img src="assets/logo-96.png" alt="" width="18" height="18" />
+      <span>Genri Labs LLC</span>
+    </a>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+    </nav>
+    <span>© 2026 · @GenriLabs</span>
   </footer>
 
   <!-- GSAP + ScrollTrigger from cdnjs -->
