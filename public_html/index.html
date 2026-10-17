@@ -76,35 +76,47 @@
         </div>
       </div>
 
-      <!-- Hero object: an illustrative run log of one automated task.
-           Tilts in 3D and straightens as you scroll (data-anim="hero-card"). -->
+      <!-- Hero object: a 3D scene. Outer .scene3d tilts with scroll,
+           inner .scene3d__tilt follows the pointer. Chips float at
+           different translateZ depths so they parallax against the card. -->
       <div class="hero__stage depth-3" data-depth="3">
-        <div class="hero__card" data-anim="hero-card">
-          <div class="runlog float-loop" role="img"
-               aria-label="Example run log: a request arrives, AI drafts a disclosed reply, your staff approve it, and the decision is documented.">
-            <div class="runlog__bar" aria-hidden="true">
-              <span class="runlog__dot"></span><span class="runlog__dot"></span><span class="runlog__dot"></span>
-              <span class="runlog__title">intake-assistant · run log</span>
+        <div class="scene3d" data-anim="scene3d">
+          <div class="scene3d__tilt" data-anim="tilt-scene">
+            <div class="scene3d__floor" aria-hidden="true"></div>
+            <div class="scene3d__halo" aria-hidden="true"></div>
+
+            <div class="hero__card" data-anim="hero-card">
+              <div class="runlog" role="img"
+                   aria-label="Example run log: a request arrives, AI drafts a disclosed reply, your staff approve it, and the decision is documented.">
+                <div class="runlog__bar" aria-hidden="true">
+                  <span class="runlog__dot"></span><span class="runlog__dot"></span><span class="runlog__dot"></span>
+                  <span class="runlog__title">intake-assistant · run log</span>
+                </div>
+                <ol class="runlog__steps" aria-hidden="true">
+                  <li class="runlog__step" data-anim="step">
+                    <span class="runlog__tick"></span>
+                    <span class="runlog__text">New request received from your web form</span>
+                  </li>
+                  <li class="runlog__step" data-anim="step">
+                    <span class="runlog__tick"></span>
+                    <span class="runlog__text">Reply drafted</span>
+                    <span class="runlog__tag">AI-assisted · disclosed</span>
+                  </li>
+                  <li class="runlog__step" data-anim="step">
+                    <span class="runlog__tick"></span>
+                    <span class="runlog__text">Reviewed and approved by your staff</span>
+                  </li>
+                  <li class="runlog__step" data-anim="step">
+                    <span class="runlog__tick"></span>
+                    <span class="runlog__text">Decision logged to your documentation</span>
+                  </li>
+                </ol>
+              </div>
             </div>
-            <ol class="runlog__steps" aria-hidden="true">
-              <li class="runlog__step" data-anim="step">
-                <span class="runlog__tick"></span>
-                <span class="runlog__text">New request received from your web form</span>
-              </li>
-              <li class="runlog__step" data-anim="step">
-                <span class="runlog__tick"></span>
-                <span class="runlog__text">Reply drafted</span>
-                <span class="runlog__tag">AI-assisted · disclosed</span>
-              </li>
-              <li class="runlog__step" data-anim="step">
-                <span class="runlog__tick"></span>
-                <span class="runlog__text">Reviewed and approved by your staff</span>
-              </li>
-              <li class="runlog__step" data-anim="step">
-                <span class="runlog__tick"></span>
-                <span class="runlog__text">Decision logged to your documentation</span>
-              </li>
-            </ol>
+
+            <div class="chip chip--a" aria-hidden="true"><span class="chip__inner"><span class="chip__dot"></span>AI use disclosed</span></div>
+            <div class="chip chip--b" aria-hidden="true"><span class="chip__inner"><span class="chip__dot chip__dot--info"></span>Docs updated</span></div>
+            <div class="chip chip--c" aria-hidden="true"><span class="chip__inner"><span class="chip__dot"></span>Human approved</span></div>
           </div>
         </div>
       </div>
@@ -133,7 +145,7 @@
       <h2 class="section__title" data-anim="float">What we build, and keep running</h2>
 
       <div class="bento">
-        <article class="card card--feature" data-anim="float">
+        <article class="card card--feature" data-anim="float" data-tilt>
           <div class="card__icon card__icon--aqua" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="11" rx="2"/><path d="M12 8V4M8 13h.01M16 13h.01M9 17h6"/></svg>
           </div>
@@ -146,12 +158,17 @@
               Thursday at 10:00 is open. Want me to book it?
               <span class="chat__tag">AI-assisted</span>
             </p>
+            <p class="chat__msg chat__msg--in">Yes please.</p>
+            <p class="chat__msg chat__msg--out">
+              Booked. Your caseworker has the details and will confirm by email.
+              <span class="chat__tag">AI-assisted · reviewed by staff</span>
+            </p>
           </div>
 
           <a class="card__link" href="#contact">Learn more →</a>
         </article>
 
-        <article class="card" data-anim="float">
+        <article class="card" data-anim="float" data-tilt>
           <div class="card__icon card__icon--aqua" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13 5l-2 14"/></svg>
           </div>
@@ -160,7 +177,7 @@
           <a class="card__link" href="#contact">Learn more →</a>
         </article>
 
-        <article class="card" data-anim="float">
+        <article class="card" data-anim="float" data-tilt>
           <div class="card__icon card__icon--aqua" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a3 3 0 0 1 0 6M10 8v11l-2-1v-4M4 8h6l8-4v14l-8-4H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/></svg>
           </div>
@@ -181,22 +198,22 @@
       <div class="process__steps">
         <div class="process__line" aria-hidden="true"><span data-anim="progress"></span></div>
 
-        <article class="step" data-anim="float">
+        <article class="step" data-anim="flip" data-tilt>
           <p class="step__num">01</p>
           <h3>Listen</h3>
           <p>Tell us what routine work is eating your team's time. We'll tell you honestly whether AI is the right fix.</p>
         </article>
-        <article class="step" data-anim="float">
+        <article class="step" data-anim="flip" data-tilt>
           <p class="step__num">02</p>
           <h3>Design</h3>
           <p>We map the workflow and decide, in writing, where AI helps and where a person stays in charge.</p>
         </article>
-        <article class="step" data-anim="float">
+        <article class="step" data-anim="flip" data-tilt>
           <p class="step__num">03</p>
           <h3>Build</h3>
           <p>We build it with every AI touchpoint disclosed to the people it affects.</p>
         </article>
-        <article class="step" data-anim="float">
+        <article class="step" data-anim="flip" data-tilt>
           <p class="step__num">04</p>
           <h3>Hand over</h3>
           <p>You get the system, the documentation, and the keys. We stay on to maintain it if you want us to.</p>
@@ -209,13 +226,13 @@
       <h2 class="section__title" data-anim="float">Real products, shipped</h2>
 
       <div class="work">
-        <a class="project" href="https://shilohliving.app/" rel="noopener" data-anim="float">
+        <a class="project" href="https://shilohliving.app/" rel="noopener" data-anim="float" data-tilt>
           <span class="project__domain">shilohliving.app</span>
           <h3>Shiloh Living App</h3>
           <p>A property management platform for landlords and tenants — properties, leases, bills, payments, and tenant communication in one place.</p>
           <span class="project__link">View project <span aria-hidden="true">↗</span></span>
         </a>
-        <a class="project" href="https://aiecosystem.gladgallivants.com/" rel="noopener" data-anim="float">
+        <a class="project" href="https://aiecosystem.gladgallivants.com/" rel="noopener" data-anim="float" data-tilt>
           <span class="project__domain">aiecosystem.gladgallivants.com</span>
           <h3>AI Ecosystem</h3>
           <p>A searchable intelligence database tracking AI companies, models, benchmarks, and research for professionals and builders.</p>

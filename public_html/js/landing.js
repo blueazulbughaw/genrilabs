@@ -8,7 +8,10 @@
      data-anim="split"      → heading whose words rise out of a mask on load
      data-anim="float"      → panels that float up when scrolled into view
      data-anim="trace"      → circuit path that draws itself on load
-     data-anim="hero-card"  → 3D card that straightens on scroll (scrubbed)
+     data-anim="scene3d"    → hero 3D scene: tilted pose that flattens on scroll
+     data-anim="tilt-scene" → inner scene layer that follows the pointer
+     data-anim="flip"       → cards that flip up in 3D when scrolled into view
+     data-tilt              → element tilts toward the pointer in 3D on hover
      data-anim="step"       → run-log lines that tick in, on a loop
      data-anim="progress"   → line that fills as its section scrolls by
      data-anim="words"      → paragraph whose words light up with scroll
@@ -111,10 +114,12 @@
     const words = splitWords(el, "word", "word__inner");
     words.forEach((w) => w.parentElement.setAttribute("aria-hidden", "true"));
     gsap.from(words, {
-      yPercent: 110,
-      duration: 0.9,
+      yPercent: 60,
+      rotateX: -90,
+      opacity: 0,
+      duration: 1.1,
       ease: "power3.out",
-      stagger: 0.045,
+      stagger: 0.06,
       delay: 0.1,
     });
   });
@@ -144,9 +149,9 @@
   });
 
   /* ---------- 4. Hero depth parallax ----------
-     Far layers drift slower than the page; the hero object rises a
-     little faster. Text (depth 4) stays at scroll speed. */
-  const drift = { 0: 140, 1: 90, 2: 50, 3: -40 };
+     Far layers drift slower than the page. Text (depth 4) stays at
+     scroll speed; the 3D scene (depth 3) is handled in step 5. */
+  const drift = { 0: 220, 1: 140, 2: 80 };
   document.querySelectorAll(".hero [data-depth]").forEach((layer) => {
     const d = drift[layer.dataset.depth];
     if (!d) return;
@@ -157,45 +162,68 @@
     });
   });
 
-  // Fine pointers: background layers lean gently toward the cursor.
-  if (!coarse) {
-    const hero = document.querySelector(".hero");
-    const glow = document.querySelector(".hero__glow");
-    const mark = document.querySelector(".hero__mark");
-    if (hero && glow && mark) {
-      const glowX = gsap.quickTo(glow, "x", { duration: 1.2, ease: "power3.out" });
-      const markX = gsap.quickTo(mark, "x", { duration: 1.6, ease: "power3.out" });
-      const markY = gsap.quickTo(mark, "y", { duration: 1.6, ease: "power3.out" });
+  /* ---------- 5. Hero 3D scene ----------
+     a) Entrance: the card and chips fly in from deep in z-space.
+     b) Scroll: the tilted scene flattens, lifts and scales up.
+     c) Pointer: the inner layer rotates toward the cursor, so chips at
+        different translateZ depths visibly slide against the card.
+        Touch devices get a slow idle sway instead. */
+  const scene = document.querySelector("[data-anim='scene3d']");
+  const tilt = document.querySelector("[data-anim='tilt-scene']");
+  if (scene && tilt) {
+    gsap.from(".hero__card", { z: -500, rotateX: 30, opacity: 0, duration: 1.6, ease: "power3.out", delay: 0.5 });
+    gsap.from(".chip", { z: -700, opacity: 0, duration: 1.4, ease: "power3.out", stagger: 0.15, delay: 1.0 });
+    gsap.from(".scene3d__floor", { opacity: 0, duration: 2, delay: 0.6 });
+
+    gsap.fromTo(scene,
+      { rotateX: 24, rotateY: -18, y: 0, scale: 0.95 },
+      {
+        rotateX: 0, rotateY: 0, y: -60, scale: 1.06,
+        ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom 30%", scrub: 0.6 },
+      }
+    );
+
+    if (!coarse) {
+      const hero = document.querySelector(".hero");
+      const rotY = gsap.quickTo(tilt, "rotationY", { duration: 0.9, ease: "power3.out" });
+      const rotX = gsap.quickTo(tilt, "rotationX", { duration: 0.9, ease: "power3.out" });
+      const glowX = gsap.quickTo(".hero__glow", "x", { duration: 1.2, ease: "power3.out" });
+      const markX = gsap.quickTo(".hero__mark", "x", { duration: 1.6, ease: "power3.out" });
       hero.addEventListener("pointermove", (e) => {
-        const r = hero.getBoundingClientRect();
-        const nx = (e.clientX - r.left) / r.width - 0.5;
-        const ny = (e.clientY - r.top) / r.height - 0.5;
-        glowX(nx * 60);
-        markX(nx * -30);
-        markY(ny * -20);
+        const nx = e.clientX / window.innerWidth - 0.5;
+        const ny = e.clientY / window.innerHeight - 0.5;
+        rotY(nx * 26);
+        rotX(ny * -16);
+        glowX(nx * 80);
+        markX(nx * -40);
+      });
+      hero.addEventListener("pointerleave", () => { rotY(0); rotX(0); });
+    } else {
+      gsap.fromTo(tilt, { rotateY: -8, rotateX: 3 }, {
+        rotateY: 8, rotateX: -3, duration: 6, ease: "sine.inOut", yoyo: true, repeat: -1,
       });
     }
   }
 
-  /* ---------- 5. Hero card: 3D rotation scrubbed to scroll ----------
-     The card starts tilted and straightens as it moves through the
-     viewport. scrub ties progress to scroll position, both ways. */
-  gsap.fromTo(
-    "[data-anim='hero-card']",
-    { rotateY: -14, rotateX: 8, scale: 0.94 },
-    {
-      rotateY: 0,
-      rotateX: 0,
-      scale: 1,
-      ease: "none",
-      scrollTrigger: {
-        trigger: "[data-anim='hero-card']",
-        start: "top 95%",
-        end: "top 35%",
-        scrub: true,
-      },
-    }
-  );
+  /* ---------- 5b. Card 3D hover tilt (data-tilt) ---------- */
+  if (!coarse) {
+    document.querySelectorAll("[data-tilt]").forEach((el) => {
+      const rx = gsap.quickTo(el, "rotationX", { duration: 0.5, ease: "power3.out" });
+      const ry = gsap.quickTo(el, "rotationY", { duration: 0.5, ease: "power3.out" });
+      gsap.set(el, { transformPerspective: 900 });
+      el.addEventListener("pointermove", (e) => {
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        ry((px - 0.5) * 16);
+        rx((py - 0.5) * -14);
+        el.style.setProperty("--mx", px * 100 + "%");
+        el.style.setProperty("--my", py * 100 + "%");
+      });
+      el.addEventListener("pointerleave", () => { rx(0); ry(0); });
+    });
+  }
 
   /* ---------- 6. Run log: lines tick in one by one, then replay ---------- */
   const steps = gsap.utils.toArray("[data-anim='step']");
@@ -225,6 +253,19 @@
         duration: 0.8,
         ease: "power3.out",
         stagger: 0.12,
+      }),
+  });
+
+  /* ---------- 7b. Process steps flip up in 3D ---------- */
+  gsap.set("[data-anim='flip']", { rotateX: -70, y: 60, opacity: 0, transformOrigin: "50% 0%", transformPerspective: 900 });
+  ScrollTrigger.batch("[data-anim='flip']", {
+    start: "top 85%",
+    once: true,
+    onEnter: (batch) =>
+      gsap.to(batch, {
+        rotateX: 0, y: 0, opacity: 1,
+        duration: 1.1, ease: "power3.out", stagger: 0.15,
+        onComplete: () => gsap.set(batch, { transformOrigin: "50% 50%" }),
       }),
   });
 
