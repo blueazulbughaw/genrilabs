@@ -80,7 +80,8 @@
       if (s.status === "draft") title.appendChild(el("span", "tag tag--client", "Draft from Claude · set hours"));
       main.appendChild(title);
       main.appendChild(el("p", "project-row__desc", s.activity));
-      const meta = [s.project, s.evidence && "Evidence: " + s.evidence, s.notes].filter(Boolean).join(" · ");
+      const meta = [s.project, s.evidence && "Evidence: " + s.evidence,
+        s.degree_link && "Degree link: " + s.degree_link, s.notes].filter(Boolean).join(" · ");
       if (meta) main.appendChild(el("p", "project-row__meta", meta));
 
       const actions = el("div", "project-row__actions");
@@ -128,6 +129,7 @@
     f.project.value = s ? s.project : "";
     f.activity.value = s ? s.activity : "";
     f.evidence.value = s ? s.evidence : "";
+    f.degree_link.value = s ? s.degree_link : "";
     f.notes.value = s ? s.notes : "";
     form.hidden = false;
     (s && s.hours === null ? f.hours : f.work_date).focus();
@@ -148,6 +150,7 @@
       project: f.project.value,
       activity: f.activity.value,
       evidence: f.evidence.value,
+      degree_link: f.degree_link.value,
       notes: f.notes.value,
     };
     const saveBtn = document.getElementById("save-btn");

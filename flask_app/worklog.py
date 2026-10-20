@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS work_sessions (
     activity    VARCHAR(1000) NOT NULL,
     project     VARCHAR(120)  NOT NULL DEFAULT '',
     evidence    VARCHAR(500)  NOT NULL DEFAULT '',
+    degree_link VARCHAR(500)  NOT NULL DEFAULT '',          -- optional: how the work applies the MBA-MIS
     notes       VARCHAR(500)  NOT NULL DEFAULT '',
     status      VARCHAR(16)   NOT NULL DEFAULT 'approved',  -- 'draft' | 'approved'
     source      VARCHAR(16)   NOT NULL DEFAULT 'manual',    -- 'manual' | 'claude'
@@ -55,18 +56,22 @@ CREATE TABLE IF NOT EXISTS work_sessions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 """
 
-_COLUMNS = ("id, work_date, hours, category, activity, project, evidence, notes, "
+_COLUMNS = ("id, work_date, hours, category, activity, project, evidence, degree_link, notes, "
             "status, source, created_at")
 
 _ready = False
 
 
 def ensure_table():
-    """Create the work_sessions table once per process."""
+    """Create the work_sessions table (and add later columns) once per process."""
     global _ready
     if _ready:
         return
     execute(_CREATE_SQL)
+    # Tables created before degree_link existed get the column added in place.
+    if not query("SHOW COLUMNS FROM work_sessions LIKE %s", ("degree_link",)):
+        execute("ALTER TABLE work_sessions ADD COLUMN degree_link VARCHAR(500) "
+                "NOT NULL DEFAULT '' AFTER evidence")
     _ready = True
 
 
@@ -94,6 +99,7 @@ def _serialize(row):
         "activity": row["activity"],
         "project": row["project"],
         "evidence": row["evidence"],
+        "degree_link": row["degree_link"],
         "notes": row["notes"],
         "status": row["status"],
         "source": row["source"],
@@ -142,9 +148,10 @@ def clean(data, require_hours=True):
         "activity": activity,
         "project": (data.get("project") or "").strip(),
         "evidence": (data.get("evidence") or "").strip(),
+        "degree_link": (data.get("degree_link") or "").strip(),
         "notes": (data.get("notes") or "").strip(),
     }
-    limits = {"activity": 1000, "project": 120, "evidence": 500, "notes": 500}
+    limits = {"activity": 1000, "project": 120, "evidence": 500, "degree_link": 500, "notes": 500}
     if any(len(fields[k]) > n for k, n in limits.items()):
         return None, "One of the fields is too long."
     return fields, None
@@ -154,9 +161,11 @@ def create(fields, status="approved", source="manual"):
     ensure_table()
     return execute(
         "INSERT INTO work_sessions (work_date, hours, category, activity, project, "
-        "evidence, notes, status, source) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        "evidence, degree_link, notes, status, source) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (fields["work_date"], fields["hours"], fields["category"], fields["activity"],
-         fields["project"], fields["evidence"], fields["notes"], status, source),
+         fields["project"], fields["evidence"], fields["degree_link"], fields["notes"],
+         status, source),
     )
 
 
@@ -165,9 +174,11 @@ def update(session_id, fields):
     ensure_table()
     execute(
         "UPDATE work_sessions SET work_date = %s, hours = %s, category = %s, activity = %s, "
-        "project = %s, evidence = %s, notes = %s, status = 'approved' WHERE id = %s",
+        "project = %s, evidence = %s, degree_link = %s, notes = %s, status = 'approved' "
+        "WHERE id = %s",
         (fields["work_date"], fields["hours"], fields["category"], fields["activity"],
-         fields["project"], fields["evidence"], fields["notes"], session_id),
+         fields["project"], fields["evidence"], fields["degree_link"], fields["notes"],
+         session_id),
     )
 
 
@@ -214,11 +225,12 @@ def export_xlsx():
     log = wb.active
     log.title = "Work Log"
     log.append(["Date", "Week Start (Mon)", "Hours", "Category", "Activity Description",
-                "Project", "Evidence / Reference", "Notes", "Status", "Source"])
+                "Project", "Evidence / Reference", "Degree link (MBA-MIS)", "Notes", "Status", "Source"])
     for s in sorted(sessions, key=lambda x: (x["work_date"], x["id"])):
         log.append([_as_date(s["work_date"]), _as_date(s["week_start"]), s["hours"], s["category"],
-                    s["activity"], s["project"], s["evidence"], s["notes"], s["status"], s["source"]])
-    for width, col in zip((12, 16, 8, 28, 60, 22, 32, 30, 10, 10), "ABCDEFGHIJ"):
+                    s["activity"], s["project"], s["evidence"], s["degree_link"], s["notes"],
+                    s["status"], s["source"]])
+    for width, col in zip((12, 16, 8, 28, 60, 22, 32, 40, 30, 10, 10), "ABCDEFGHIJK"):
         log.column_dimensions[col].width = width
     for row in log.iter_rows(min_row=2, max_col=2):
         for cell in row:

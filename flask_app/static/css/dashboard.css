@@ -186,6 +186,7 @@ a.btn-ghost { text-decoration: none; display: inline-flex; align-items: center; 
   width: 100%;
 }
 .form-grid textarea { resize: vertical; }
+.form-grid .optional { color: var(--color-text-faint); font-size: 0.75rem; margin-left: 0.25rem; }
 .form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
   outline: none;
   border-color: var(--color-accent);

@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS work_sessions (
     activity    VARCHAR(1000) NOT NULL,
     project     VARCHAR(120)  NOT NULL DEFAULT '',
     evidence    VARCHAR(500)  NOT NULL DEFAULT '',
+    degree_link VARCHAR(500)  NOT NULL DEFAULT '',          -- optional: how the work applies the MBA-MIS
     notes       VARCHAR(500)  NOT NULL DEFAULT '',
     status      VARCHAR(16)   NOT NULL DEFAULT 'approved',  -- 'draft' | 'approved'
     source      VARCHAR(16)   NOT NULL DEFAULT 'manual',    -- 'manual' | 'claude'
@@ -85,6 +86,8 @@ CREATE TABLE IF NOT EXISTS work_sessions (
     updated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_work_date (work_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- Existing installs: worklog.py adds degree_link automatically, or run
+-- ALTER TABLE work_sessions ADD COLUMN degree_link VARCHAR(500) NOT NULL DEFAULT '' AFTER evidence;
 
 -- ------------------------------------------------------------
 -- Sample seed data so the dashboard charts render immediately.

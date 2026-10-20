@@ -41,20 +41,8 @@ Flask app → `~/genri_admin` via Passenger (`passenger_wsgi.py` is the entry po
   fallback; keep them roughly in sync. The public site never calls the Flask app.
 - OPT work log: admin page `/worklog` (table `work_sessions`, logic in `flask_app/worklog.py`).
   Only approved rows count toward the weekly 20-hour total. Hours are only ever entered by Glad;
-  never set or guess hours from code or from Claude.
-
-## Logging work (do this at the end of every task)
-After finishing a task for Genri Labs, post ONE draft entry to the work log so Glad has a
-contemporaneous record. Only if `GENRI_WORKLOG_KEY` is set in the shell environment:
-
-```bash
-curl -sS -X POST "https://genrilabs.com/gl-admin/api/worklog/ingest" \
-  -H "Authorization: Bearer $GENRI_WORKLOG_KEY" -H "Content-Type: application/json" \
-  -d '{"work_date":"YYYY-MM-DD","category":"Software Development","activity":"<specific: what was built/fixed and why>","project":"<project or client>","evidence":"<branch, commit, PR, or file>"}'
-```
-- `category` must be one of `worklog.CATEGORIES`. Use today's local date. Never send `hours`.
-- Describe the work specifically ("Built JWT login route for the admin"), not "worked on site".
-- If the variable is unset or the call fails, tell Glad in one line and move on.
+  never set or guess hours from code or from Claude. (How to post draft entries lives in
+  `~/.claude/CLAUDE.md`, not here, so work is logged once.)
 
 ## Commands
 - Local Flask dev: `cd flask_app && source .venv/bin/activate && python app.py` (port 5000)
