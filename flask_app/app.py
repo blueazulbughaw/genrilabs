@@ -230,6 +230,7 @@ def worklog_page():
 
 
 def _worklog_response(status=200, **extra):
+    worklog.merge_duplicate_drafts()  # tidies rows posted before drafts were merged per day
     sessions = worklog.list_sessions()
     return jsonify({"sessions": sessions, "weeks": worklog.weekly_summary(sessions), **extra}), status
 
@@ -306,7 +307,8 @@ def api_worklog_ingest():
         if error:
             return jsonify({"error": f"Entry {i + 1}: {error}"}), 400
         cleaned.append(fields)
-    ids = [worklog.create(f, status="draft", source="claude") for f in cleaned]
+    # One draft per project per day: same-day entries merge instead of stacking up.
+    ids = sorted({worklog.add_draft(f) for f in cleaned})
     return jsonify({"ok": True, "ids": ids, "status": "draft"}), 201
 
 
