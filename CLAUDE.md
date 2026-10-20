@@ -34,6 +34,11 @@ Flask app → `~/genri_admin` via Passenger (`passenger_wsgi.py` is the entry po
 - New dashboard chart: (1) insert rows with a new `metric_key` into the `metrics` table,
   (2) add a `<canvas>` in `templates/dashboard.html`, (3) add one entry to the `CHARTS`
   array in `static/js/dashboard.js`. The `/api/metrics` endpoint needs no changes.
+- Landing "Work" cards: edited in the admin at `/projects` (table `projects`, logic in
+  `flask_app/projects.py`). Every save writes `public_html/data/projects.json`
+  (gitignored, server-only; `Config.PUBLIC_HTML_DIR` defaults to the sibling folder),
+  which `js/landing.js` renders. The cards hardcoded in `index.html` are the no-JS
+  fallback; keep them roughly in sync. The public site never calls the Flask app.
 
 ## Commands
 - Local Flask dev: `cd flask_app && source .venv/bin/activate && python app.py` (port 5000)

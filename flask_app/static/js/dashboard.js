@@ -1,12 +1,11 @@
 /* ============================================================
    GENRI LABS — DASHBOARD LOGIC
 
-   Three jobs:
+   Two jobs:
      1. Fetch /api/metrics and render charts (config-driven —
         add charts by editing the CHARTS array, nothing else).
      2. Fill metric cards from series totals.
-     3. Watch the JWT expiry: show a countdown, warn at 2 min,
-        redirect to the public site the moment it expires.
+   The session countdown + logout live in session.js (shared).
    ============================================================ */
 
 (function () {
@@ -68,7 +67,7 @@
   /* -------- Load metrics; a 401 means the JWT died → leave -------- */
   async function loadMetrics() {
     const res = await fetch(window.API_METRICS_URL);
-    if (res.status === 401) return goHome("api/metrics returned 401 Unauthorized");
+    if (res.status === 401) return window.GLSession.goHome("api/metrics returned 401 Unauthorized");
     if (!res.ok) {
       const body = await res.text().catch(() => "<unreadable body>");
       throw new Error(`api/metrics returned ${res.status}: ${body.slice(0, 300)}`);
@@ -92,50 +91,10 @@
     });
   }
 
-  /* -------- JWT session countdown + auto-redirect --------
-     The httpOnly cookie holds the token itself (unreadable to JS,
-     by design). A second, readable cookie holds just the expiry
-     epoch so we can count down without exposing the token. */
-  function getExpiryEpoch() {
-    const m = document.cookie.match(/(?:^|;\s*)gl_token_exp=(\d+)/);
-    return m ? parseInt(m[1], 10) : null;
-  }
-
-  function goHome(reason) {
-    if (reason) console.warn("[dashboard] redirecting to public site:", reason);
-    window.location.href = window.PUBLIC_SITE_URL || "/";
-  }
-
-  function startSessionWatch() {
-    const pill = document.getElementById("session-pill");
-    const out = document.getElementById("session-countdown");
-    const exp = getExpiryEpoch();
-    if (!exp) return goHome("no gl_token_exp cookie found (document.cookie: " + document.cookie + ")");
-
-    const tick = () => {
-      const remaining = exp - Math.floor(Date.now() / 1000);
-      if (remaining <= 0) return goHome("session countdown reached zero");   // THE requirement: expiry → landing page
-      const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
-      const ss = String(remaining % 60).padStart(2, "0");
-      out.textContent = `${mm}:${ss}`;
-      if (remaining <= 120) pill.classList.add("session-pill--warning");
-    };
-    tick();
-    setInterval(tick, 1000);
-  }
-
-  /* -------- Logout -------- */
-  document.getElementById("logout-btn").addEventListener("click", async () => {
-    const res = await fetch(window.API_LOGOUT_URL, { method: "POST" });
-    const data = await res.json().catch(() => ({}));
-    window.location.href = data.redirect || window.PUBLIC_SITE_URL;
-  });
-
   /* -------- Boot --------
      Only an actual 401 (handled inside loadMetrics) means the session
      died — any other failure (e.g. a chart library that failed to load)
      is a rendering bug, not an auth problem, and must not kick an
      otherwise-valid session out to the public site. */
-  startSessionWatch();
   loadMetrics().catch((err) => console.error("[dashboard] failed to load metrics/charts:", err));
 })();

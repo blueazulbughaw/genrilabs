@@ -28,6 +28,14 @@ class Config:
     # The requirement: expired sessions land on the public site.
     PUBLIC_SITE_URL = os.environ.get("PUBLIC_SITE_URL", "https://genrilabs.com")
 
+    # --- Public site folder (the admin publishes data/projects.json into it) ---
+    # Defaults to the sibling folder: ~/genri_admin → ~/public_html on the
+    # server, flask_app → public_html in the repo.
+    PUBLIC_HTML_DIR = os.environ.get(
+        "PUBLIC_HTML_DIR",
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public_html"),
+    )
+
     # --- MySQL (cPanel-created database + user) ---
     DB_HOST = os.environ.get("DB_HOST", "localhost")   # 'localhost' on shared hosting
     DB_NAME = os.environ["DB_NAME"]                     # e.g. cpaneluser_genrilabs

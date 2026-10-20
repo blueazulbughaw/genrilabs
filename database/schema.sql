@@ -44,6 +44,26 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ------------------------------------------------------------
+-- Projects: the landing page's "Real products, shipped" cards.
+-- Edited at /projects in the admin; every save publishes
+-- public_html/data/projects.json. flask_app/projects.py also
+-- creates + seeds this table on first use, so importing it here
+-- is optional.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS projects (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title       VARCHAR(120)  NOT NULL,
+    url         VARCHAR(255)  NOT NULL,
+    domain      VARCHAR(120)  NOT NULL DEFAULT '',
+    description VARCHAR(600)  NOT NULL DEFAULT '',
+    kind        VARCHAR(16)   NOT NULL DEFAULT 'client',  -- 'client' | 'lab'
+    sort_order  INT           NOT NULL DEFAULT 0,
+    is_visible  TINYINT(1)    NOT NULL DEFAULT 1,
+    created_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
 -- Sample seed data so the dashboard charts render immediately.
 -- Replace with real numbers whenever — the charts just follow.
 -- ------------------------------------------------------------

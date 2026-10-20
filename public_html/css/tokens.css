@@ -27,6 +27,10 @@
   --color-info-base:   #3D7EA6;  /* blue base (charts, borders)                */
   --color-info-dim:    #15222E;  /* blue tint for icon tiles   */
 
+  /* ---- Color: errors + destructive actions (admin only) ---- */
+  --color-danger:      #E08A8A;
+  --color-danger-dim:  #2E1A1A;
+
   /* ---- Rule: text ON aqua is near-black, never white ---- */
   --color-on-accent:   #0B1014;
 

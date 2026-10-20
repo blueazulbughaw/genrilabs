@@ -8,6 +8,10 @@ see DEPLOYMENT.md; e.g. mounting at /gl-admin makes "/" = /gl-admin):
   POST /api/login     → verify credentials, issue JWT cookie
   GET  /dashboard     → protected dashboard (redirects to public site if JWT invalid)
   GET  /api/metrics   → protected JSON feed for the Chart.js charts
+  GET  /projects      → protected editor for the landing page's "Work" section
+  GET/POST /api/projects, PUT/DELETE /api/projects/<id>
+                      → project CRUD; every write re-publishes
+                        public_html/data/projects.json (see projects.py)
   POST /api/logout    → clear cookies, redirect to public site
 
 Security notes:
@@ -22,6 +26,7 @@ from flask import Flask, render_template, request, jsonify, redirect, make_respo
 
 from config import Config
 from db import query, execute, close_db
+import projects
 from auth import (
     issue_token,
     set_auth_cookies,
@@ -142,6 +147,64 @@ def api_metrics():
         )
         totals[key] = totals.get(key, 0) + float(r["value"])
     return jsonify({"series": series, "totals": totals})
+
+
+# ---------------------------------------------------------------
+# PROJECTS  (edits the public "Real products, shipped" section)
+# ---------------------------------------------------------------
+@app.route("/projects")
+@login_required
+def projects_page():
+    return render_template("projects.html", public_site=Config.PUBLIC_SITE_URL)
+
+
+def _publish_response(status=200, **extra):
+    """Re-publish the public JSON, then return the fresh list."""
+    try:
+        published = projects.publish()
+    except OSError as e:
+        app.logger.exception("projects.json publish failed")
+        return jsonify({"error": f"Saved, but publishing to the site failed: {e}"}), 500
+    return jsonify({"projects": projects.list_projects(), "published": published, **extra}), status
+
+
+@app.route("/api/projects", methods=["GET"])
+@login_required
+def api_projects_list():
+    return jsonify({"projects": projects.list_projects()})
+
+
+@app.route("/api/projects", methods=["POST"])
+@login_required
+def api_projects_create():
+    fields, error = projects.clean(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"error": error}), 400
+    new_id = projects.create(fields)
+    return _publish_response(201, id=new_id)
+
+
+@app.route("/api/projects/<int:project_id>", methods=["PUT"])
+@login_required
+def api_projects_update(project_id):
+    fields, error = projects.clean(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"error": error}), 400
+    projects.update(project_id, fields)
+    return _publish_response()
+
+
+@app.route("/api/projects/publish", methods=["POST"])
+@login_required
+def api_projects_publish():
+    return _publish_response()
+
+
+@app.route("/api/projects/<int:project_id>", methods=["DELETE"])
+@login_required
+def api_projects_delete(project_id):
+    projects.delete(project_id)
+    return _publish_response()
 
 
 # ---------------------------------------------------------------

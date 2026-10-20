@@ -225,14 +225,25 @@
     <section class="section" id="work">
       <h2 class="section__title" data-anim="float">Real products, shipped</h2>
 
-      <div class="work">
+      <!-- Cards below are the no-JS fallback. landing.js swaps in
+           data/projects.json, which the admin publishes on every save. -->
+      <div class="work" id="work-list">
         <a class="project" href="https://shilohliving.app/" rel="noopener" data-anim="float" data-tilt>
+          <span class="project__tag">Client</span>
           <span class="project__domain">shilohliving.app</span>
           <h3>Shiloh Living App</h3>
           <p>A property management platform for landlords and tenants — properties, leases, bills, payments, and tenant communication in one place.</p>
           <span class="project__link">View project <span aria-hidden="true">↗</span></span>
         </a>
+        <a class="project" href="https://secretsanta.glad.codes/" rel="noopener" data-anim="float" data-tilt>
+          <span class="project__tag">Lab</span>
+          <span class="project__domain">secretsanta.glad.codes</span>
+          <h3>Secret Santa</h3>
+          <p>A family gift-exchange app built for every age — wish lists, name draws, and sign-in by text code, installable on any phone.</p>
+          <span class="project__link">View project <span aria-hidden="true">↗</span></span>
+        </a>
         <a class="project" href="https://aiecosystem.gladgallivants.com/" rel="noopener" data-anim="float" data-tilt>
+          <span class="project__tag">Lab</span>
           <span class="project__domain">aiecosystem.gladgallivants.com</span>
           <h3>AI Ecosystem</h3>
           <p>A searchable intelligence database tracking AI companies, models, benchmarks, and research for professionals and builders.</p>
@@ -277,7 +288,7 @@
       <a href="#work">Work</a>
       <a href="#about">About</a>
     </nav>
-    <span>© 2026 · @GenriLabs</span>
+    <span>© 2026 · @GenriLabs · Founded by <a class="footer__founder" href="https://glad.codes/" rel="noopener">Glad Cedeño</a></span>
   </footer>
 
   <!-- GSAP + ScrollTrigger from cdnjs -->

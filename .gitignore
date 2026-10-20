@@ -22,3 +22,6 @@ tmp/
 
 # skillmds canonical store (.claude/skills is the committed copy)
 .agents/
+
+# Published by the admin on the server; deploys must never overwrite it
+public_html/data/

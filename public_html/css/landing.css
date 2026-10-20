@@ -600,6 +600,8 @@ a:focus-visible, .btn:focus-visible, button:focus-visible {
   margin-top: var(--space-4);
 }
 @media (min-width: 640px) { .work { grid-template-columns: repeat(2, 1fr); } }
+/* Three or more projects: one row of three on wide screens (no orphan card). */
+@media (min-width: 960px) { .work:has(> .project:nth-child(3)) { grid-template-columns: repeat(3, 1fr); } }
 
 .project {
   position: relative;
@@ -617,6 +619,18 @@ a:focus-visible, .btn:focus-visible, button:focus-visible {
 .project:hover { border-color: var(--color-accent-dark); }
 .project h3 { font-size: clamp(1.5rem, 2.8vw, 2.1rem); }
 .project p { color: var(--color-text-muted); margin-bottom: var(--space-3); }
+.project__tag {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.6rem;
+}
 .project__domain {
   font-family: var(--font-display);
   font-size: 0.8rem;
@@ -687,6 +701,8 @@ a:focus-visible, .btn:focus-visible, button:focus-visible {
 .footer__links { display: flex; gap: var(--space-2); }
 .footer__links a { color: var(--color-text-faint); }
 .footer__links a:hover { color: var(--color-text); }
+.footer__founder { color: var(--color-text-muted); }
+.footer__founder:hover { color: var(--color-accent); }
 
 /* ---------------- Reduced motion ----------------
    landing.js also checks this, but the CSS guard means

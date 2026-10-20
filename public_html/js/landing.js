@@ -17,6 +17,9 @@
      data-anim="words"      → paragraph whose words light up with scroll
      data-depth="0..4"      → hero layers parallaxed at depth-based speeds
 
+   The Work cards are loaded from data/projects.json (published by the
+   admin); see the PROJECTS block at the bottom of this file.
+
    Content is fully visible without JS or with reduced motion;
    everything here is progressive enhancement.
    ============================================================ */
@@ -207,8 +210,9 @@
   }
 
   /* ---------- 5b. Card 3D hover tilt (data-tilt) ---------- */
-  if (!coarse) {
-    document.querySelectorAll("[data-tilt]").forEach((el) => {
+  function bindTilt(els) {
+    if (coarse) return;
+    els.forEach((el) => {
       const rx = gsap.quickTo(el, "rotationX", { duration: 0.5, ease: "power3.out" });
       const ry = gsap.quickTo(el, "rotationY", { duration: 0.5, ease: "power3.out" });
       gsap.set(el, { transformPerspective: 900 });
@@ -224,6 +228,7 @@
       el.addEventListener("pointerleave", () => { rx(0); ry(0); });
     });
   }
+  bindTilt(document.querySelectorAll("[data-tilt]"));
 
   /* ---------- 6. Run log: lines tick in one by one, then replay ---------- */
   const steps = gsap.utils.toArray("[data-anim='step']");
@@ -241,20 +246,25 @@
   /* ---------- 7. Floating panels: trigger-once entrances ----------
      ScrollTrigger.batch groups elements that enter together so
      cards in the same row stagger instead of popping simultaneously. */
-  gsap.set("[data-anim='float']", { y: 40, opacity: 0 });
+  function bindFloat(els) {
+    gsap.set(els, { y: 40, opacity: 0 });
+    ScrollTrigger.batch(els, {
+      start: "top 88%",
+      once: true,
+      onEnter: (batch) =>
+        gsap.to(batch, {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.12,
+        }),
+    });
+  }
+  bindFloat(gsap.utils.toArray("[data-anim='float']"));
 
-  ScrollTrigger.batch("[data-anim='float']", {
-    start: "top 88%",
-    once: true,
-    onEnter: (batch) =>
-      gsap.to(batch, {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-        stagger: 0.12,
-      }),
-  });
+  // Lets the projects loader (below) animate cards it adds later.
+  window.GenriMotion = { bindFloat, bindTilt };
 
   /* ---------- 7b. Process steps flip up in 3D ---------- */
   gsap.set("[data-anim='flip']", { rotateX: -70, y: 60, opacity: 0, transformOrigin: "50% 0%", transformPerspective: 900 });
@@ -293,4 +303,62 @@
       scrollTrigger: { trigger: el, start: "top 80%", end: "bottom 50%", scrub: true },
     });
   });
+})();
+
+/* ============================================================
+   PROJECTS — the "Work" cards come from data/projects.json, which
+   the admin publishes on every save. The cards already in the HTML
+   are the fallback: if the file is missing or broken, they stay.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  const list = document.getElementById("work-list");
+  if (!list || !window.fetch) return;
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function card(p) {
+    const a = el("a", "project");
+    a.href = p.url;
+    a.rel = "noopener";
+    a.setAttribute("data-anim", "float");
+    a.setAttribute("data-tilt", "");
+    a.appendChild(el("span", "project__tag", p.kind === "lab" ? "Lab" : "Client"));
+    a.appendChild(el("span", "project__domain", p.domain));
+    a.appendChild(el("h3", "", p.title));
+    if (p.description) a.appendChild(el("p", "", p.description));
+    const link = el("span", "project__link", "View project ");
+    const arrow = el("span", "", "↗");
+    arrow.setAttribute("aria-hidden", "true");
+    link.appendChild(arrow);
+    a.appendChild(link);
+    return a;
+  }
+
+  fetch("data/projects.json", { cache: "no-cache" })
+    .then((res) => (res.ok ? res.json() : null))
+    .then((data) => {
+      const items = data && Array.isArray(data.projects)
+        ? data.projects.filter((p) => p && p.title && /^https?:\/\//.test(p.url || ""))
+        : [];
+      if (!items.length) return;
+
+      const cards = items.map(card);
+      list.replaceChildren(...cards);
+
+      // Motion is skipped entirely under reduced motion / no GSAP —
+      // the cards are then simply visible, like the fallback.
+      if (window.GenriMotion) {
+        window.GenriMotion.bindFloat(cards);
+        window.GenriMotion.bindTilt(cards);
+        ScrollTrigger.refresh();
+      }
+    })
+    .catch(() => { /* keep the fallback cards */ });
 })();
