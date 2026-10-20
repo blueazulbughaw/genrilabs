@@ -36,6 +36,7 @@ STATUSES = ("draft", "approved")
 WEEKLY_MINIMUM = 20
 FIRST_WEEK = datetime.date(2026, 6, 29)  # Monday of the week Genri Labs LLC was formed
 MAX_HOURS_PER_ROW = 16
+MAX_ACTIVITY = 4000
 
 _CREATE_SQL = """
 CREATE TABLE IF NOT EXISTS work_sessions (
@@ -43,7 +44,7 @@ CREATE TABLE IF NOT EXISTS work_sessions (
     work_date   DATE          NOT NULL,
     hours       DECIMAL(5,2)  NULL,                      -- NULL until a draft is approved
     category    VARCHAR(64)   NOT NULL,
-    activity    VARCHAR(1000) NOT NULL,
+    activity    TEXT          NOT NULL,                   -- a day's summary can be long
     project     VARCHAR(120)  NOT NULL DEFAULT '',
     evidence    VARCHAR(500)  NOT NULL DEFAULT '',
     degree_link VARCHAR(500)  NOT NULL DEFAULT '',          -- optional: how the work applies the MBA-MIS
@@ -72,6 +73,10 @@ def ensure_table():
     if not query("SHOW COLUMNS FROM work_sessions LIKE %s", ("degree_link",)):
         execute("ALTER TABLE work_sessions ADD COLUMN degree_link VARCHAR(500) "
                 "NOT NULL DEFAULT '' AFTER evidence")
+    # Daily summaries outgrow the original VARCHAR(1000).
+    col = query("SHOW COLUMNS FROM work_sessions LIKE %s", ("activity",), one=True)
+    if col and not str(col["Type"]).lower().startswith("text"):
+        execute("ALTER TABLE work_sessions MODIFY activity TEXT NOT NULL")
     _ready = True
 
 
@@ -151,7 +156,7 @@ def clean(data, require_hours=True):
         "degree_link": (data.get("degree_link") or "").strip(),
         "notes": (data.get("notes") or "").strip(),
     }
-    limits = {"activity": 1000, "project": 120, "evidence": 500, "degree_link": 500, "notes": 500}
+    limits = {"activity": MAX_ACTIVITY, "project": 120, "evidence": 500, "degree_link": 500, "notes": 500}
     if any(len(fields[k]) > n for k, n in limits.items()):
         return None, "One of the fields is too long."
     return fields, None
@@ -167,6 +172,70 @@ def create(fields, status="approved", source="manual"):
          fields["project"], fields["evidence"], fields["degree_link"], fields["notes"],
          status, source),
     )
+
+
+def _merge_text(existing, new, sep):
+    """Add `new` to `existing` unless it's already there (keeps repeats out)."""
+    parts = [p.strip() for p in existing.split(sep) if p.strip()]
+    for piece in (p.strip() for p in new.split(sep)):
+        if piece and piece not in parts:
+            parts.append(piece)
+    return sep.join(parts)
+
+
+def add_draft(fields):
+    """
+    One draft per project per day. A new Claude entry for a date + project
+    that already has a draft is merged into it (activity lines, evidence),
+    so the log reads as a daily summary and repeats never pile up.
+    Returns the id of the draft that holds the entry.
+    """
+    ensure_table()
+    existing = query(
+        "SELECT id, activity, evidence, degree_link, notes FROM work_sessions "
+        "WHERE status = 'draft' AND work_date = %s AND project = %s ORDER BY id LIMIT 1",
+        (fields["work_date"], fields["project"]), one=True,
+    )
+    if existing is None:
+        return create(fields, status="draft", source="claude")
+    execute(
+        "UPDATE work_sessions SET activity = %s, evidence = %s, degree_link = %s, notes = %s "
+        "WHERE id = %s",
+        (_merge_text(existing["activity"], fields["activity"], "\n")[:MAX_ACTIVITY],
+         _merge_text(existing["evidence"], fields["evidence"], "; ")[:500],
+         _merge_text(existing["degree_link"], fields["degree_link"], "; ")[:500],
+         _merge_text(existing["notes"], fields["notes"], "; ")[:500],
+         existing["id"]),
+    )
+    return existing["id"]
+
+
+def merge_duplicate_drafts():
+    """Fold drafts already stored as several rows for the same day + project into one."""
+    ensure_table()
+    rows = query(
+        "SELECT id, work_date, project, activity, evidence, degree_link, notes FROM work_sessions "
+        "WHERE status = 'draft' ORDER BY work_date, project, id"
+    )
+    keep = {}
+    for r in rows:
+        key = (str(r["work_date"]), r["project"])
+        if key not in keep:
+            keep[key] = dict(r)
+            continue
+        k = keep[key]
+        k["activity"] = _merge_text(k["activity"], r["activity"], "\n")[:MAX_ACTIVITY]
+        for col in ("evidence", "degree_link", "notes"):
+            k[col] = _merge_text(k[col], r[col], "; ")[:500]
+        k["merged"] = True
+        execute("DELETE FROM work_sessions WHERE id = %s", (r["id"],))
+    for k in keep.values():
+        if k.get("merged"):
+            execute(
+                "UPDATE work_sessions SET activity = %s, evidence = %s, degree_link = %s, notes = %s "
+                "WHERE id = %s",
+                (k["activity"], k["evidence"], k["degree_link"], k["notes"], k["id"]),
+            )
 
 
 def update(session_id, fields):

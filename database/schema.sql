@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS work_sessions (
     work_date   DATE          NOT NULL,
     hours       DECIMAL(5,2)  NULL,
     category    VARCHAR(64)   NOT NULL,
-    activity    VARCHAR(1000) NOT NULL,
+    activity    TEXT          NOT NULL,
     project     VARCHAR(120)  NOT NULL DEFAULT '',
     evidence    VARCHAR(500)  NOT NULL DEFAULT '',
     degree_link VARCHAR(500)  NOT NULL DEFAULT '',          -- optional: how the work applies the MBA-MIS

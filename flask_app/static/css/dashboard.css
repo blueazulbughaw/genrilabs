@@ -245,6 +245,7 @@ a.btn-ghost { text-decoration: none; display: inline-flex; align-items: center; 
 .tag--lab { color: var(--color-info); border-color: var(--color-info-dim); background: var(--color-info-dim); }
 
 /* ---------------- Work log ---------------- */
+#log-list .project-row__desc { white-space: pre-line; }  /* daily summaries are one line per task */
 .project-row--draft { border-left: 2px solid var(--color-accent); padding-left: var(--space-2); }
 .dash > * { min-width: 0; }  /* let wide tables scroll inside their panel on phones */
 .table-wrap { overflow-x: auto; }
