@@ -99,6 +99,7 @@
         <button class="btn-accent" type="submit" id="save-btn">Save &amp; approve</button>
         <button class="btn-ghost" type="button" id="cancel-btn">Cancel</button>
       </div>
+      <p class="status status--error" id="form-error" role="alert" hidden></p>
     </form>
 
     <!-- ============ ENTRIES ============ -->
@@ -126,6 +127,6 @@
     window.WEEKLY_MINIMUM = {{ minimum | tojson }};
   </script>
   <script src="{{ url_for('static', filename='js/session.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/worklog.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/worklog.js') }}?v=2"></script>
 </body>
 </html>

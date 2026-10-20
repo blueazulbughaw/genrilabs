@@ -18,12 +18,19 @@
   const formTitle = document.getElementById("form-title");
   const f = form.elements;
   const statusEl = document.getElementById("status");
+  const formError = document.getElementById("form-error");
   let sessions = [];
   let editingId = null;
 
   function setStatus(msg, isError) {
     statusEl.textContent = msg || "";
     statusEl.classList.toggle("status--error", !!isError);
+  }
+
+  /* Save errors show beside the button — the top status line is off-screen while editing */
+  function setFormError(msg) {
+    formError.textContent = msg || "";
+    formError.hidden = !msg;
   }
 
   /* fetch wrapper: 401 → session died → public site */
@@ -123,6 +130,7 @@
     editingId = s ? s.id : null;
     formTitle.textContent = s ? (s.status === "draft" ? "Review draft" : "Edit entry") : "Log work";
     form.reset();
+    setFormError("");
     f.work_date.value = s ? s.work_date : localToday();
     f.hours.value = s && s.hours !== null ? s.hours : "";
     f.category.value = s ? s.category : f.category.options[0].value;
@@ -143,6 +151,18 @@
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const hours = Number(f.hours.value);
+    if (!f.hours.value || !(hours > 0 && hours <= 16)) {
+      setFormError("Enter the hours you worked (0.25 to 16) to approve this entry.");
+      f.hours.focus();
+      return;
+    }
+    if (!f.activity.value.trim()) {
+      setFormError("Describe what you did.");
+      f.activity.focus();
+      return;
+    }
+    setFormError("");
     const payload = {
       work_date: f.work_date.value,
       hours: f.hours.value,
@@ -162,7 +182,7 @@
       closeForm();
       apply(data, "Saved.");
     } catch (err) {
-      setStatus(err.message, true);
+      setFormError(err.message);
     } finally {
       saveBtn.disabled = false;
     }
