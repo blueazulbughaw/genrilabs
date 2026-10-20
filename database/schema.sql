@@ -64,6 +64,29 @@ CREATE TABLE IF NOT EXISTS projects (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ------------------------------------------------------------
+-- Work sessions: the OPT work log at /worklog in the admin.
+-- One row per work block. Claude posts DRAFTS (hours NULL) to
+-- /api/worklog/ingest; only approved rows count toward the
+-- weekly 20-hour total. flask_app/worklog.py also creates this
+-- table on first use, so importing it here is optional.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS work_sessions (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    work_date   DATE          NOT NULL,
+    hours       DECIMAL(5,2)  NULL,
+    category    VARCHAR(64)   NOT NULL,
+    activity    VARCHAR(1000) NOT NULL,
+    project     VARCHAR(120)  NOT NULL DEFAULT '',
+    evidence    VARCHAR(500)  NOT NULL DEFAULT '',
+    notes       VARCHAR(500)  NOT NULL DEFAULT '',
+    status      VARCHAR(16)   NOT NULL DEFAULT 'approved',  -- 'draft' | 'approved'
+    source      VARCHAR(16)   NOT NULL DEFAULT 'manual',    -- 'manual' | 'claude'
+    created_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_work_date (work_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
 -- Sample seed data so the dashboard charts render immediately.
 -- Replace with real numbers whenever — the charts just follow.
 -- ------------------------------------------------------------

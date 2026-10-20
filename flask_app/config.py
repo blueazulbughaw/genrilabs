@@ -42,6 +42,11 @@ class Config:
     DB_USER = os.environ["DB_USER"]                     # e.g. cpaneluser_gladmin
     DB_PASSWORD = os.environ["DB_PASSWORD"]
 
+    # --- Work log ingest key (lets Claude post DRAFT log entries) ---
+    # Optional. Unset = /api/worklog/ingest is disabled.
+    # Generate with:  python -c "import secrets; print(secrets.token_urlsafe(32))"
+    WORKLOG_API_KEY = os.environ.get("WORKLOG_API_KEY", "")
+
     # --- Login rate limiting ---
     MAX_LOGIN_ATTEMPTS = 5          # failures allowed...
     LOCKOUT_WINDOW_MINUTES = 15     # ...within this window, per IP

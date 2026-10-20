@@ -12,6 +12,12 @@ see DEPLOYMENT.md; e.g. mounting at /gl-admin makes "/" = /gl-admin):
   GET/POST /api/projects, PUT/DELETE /api/projects/<id>
                       → project CRUD; every write re-publishes
                         public_html/data/projects.json (see projects.py)
+  GET  /worklog       → protected OPT work log (weekly hours vs. the 20-hr minimum)
+  GET/POST /api/worklog, PUT/DELETE /api/worklog/<id>
+                      → work-session CRUD; saving from the admin approves a row
+  GET  /api/worklog/export.xlsx → Excel copy for the OPT evidence folder
+  POST /api/worklog/ingest → Claude posts DRAFT entries here with the
+                        WORKLOG_API_KEY bearer token (no JWT, no hours)
   POST /api/logout    → clear cookies, redirect to public site
 
 Security notes:
@@ -20,13 +26,15 @@ Security notes:
   - The JWT lives in an httpOnly Secure cookie (see auth.py).
 """
 import datetime
+import hmac
 
 import bcrypt
-from flask import Flask, render_template, request, jsonify, redirect, make_response, url_for
+from flask import Flask, Response, render_template, request, jsonify, redirect, make_response, url_for
 
 from config import Config
 from db import query, execute, close_db
 import projects
+import worklog
 from auth import (
     issue_token,
     set_auth_cookies,
@@ -205,6 +213,101 @@ def api_projects_publish():
 def api_projects_delete(project_id):
     projects.delete(project_id)
     return _publish_response()
+
+
+# ---------------------------------------------------------------
+# WORK LOG  (OPT timesheet: weekly hours vs. the 20-hour minimum)
+# ---------------------------------------------------------------
+@app.route("/worklog")
+@login_required
+def worklog_page():
+    return render_template(
+        "worklog.html",
+        public_site=Config.PUBLIC_SITE_URL,
+        categories=worklog.CATEGORIES,
+        minimum=worklog.WEEKLY_MINIMUM,
+    )
+
+
+def _worklog_response(status=200, **extra):
+    sessions = worklog.list_sessions()
+    return jsonify({"sessions": sessions, "weeks": worklog.weekly_summary(sessions), **extra}), status
+
+
+@app.route("/api/worklog", methods=["GET"])
+@login_required
+def api_worklog_list():
+    return _worklog_response()
+
+
+@app.route("/api/worklog", methods=["POST"])
+@login_required
+def api_worklog_create():
+    fields, error = worklog.clean(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"error": error}), 400
+    new_id = worklog.create(fields)
+    return _worklog_response(201, id=new_id)
+
+
+@app.route("/api/worklog/<int:session_id>", methods=["PUT"])
+@login_required
+def api_worklog_update(session_id):
+    fields, error = worklog.clean(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"error": error}), 400
+    worklog.update(session_id, fields)
+    return _worklog_response()
+
+
+@app.route("/api/worklog/<int:session_id>", methods=["DELETE"])
+@login_required
+def api_worklog_delete(session_id):
+    worklog.delete(session_id)
+    return _worklog_response()
+
+
+@app.route("/api/worklog/export.xlsx")
+@login_required
+def api_worklog_export():
+    filename = f"Genri_Labs_OPT_Work_Log_{datetime.date.today().isoformat()}.xlsx"
+    return Response(
+        worklog.export_xlsx(),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@app.route("/api/worklog/ingest", methods=["POST"])
+def api_worklog_ingest():
+    """
+    Machine endpoint for Claude: saves entries as DRAFTS with no hours.
+    Auth is a bearer key (WORKLOG_API_KEY), not the admin JWT. With no
+    key configured the endpoint doesn't exist.
+    """
+    if not Config.WORKLOG_API_KEY:
+        return jsonify({"error": "not found"}), 404
+    sent = request.headers.get("Authorization", "")
+    sent = sent[len("Bearer "):].strip() if sent.startswith("Bearer ") else ""
+    if not hmac.compare_digest(sent.encode(), Config.WORKLOG_API_KEY.encode()):
+        return jsonify({"error": "unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    entries = data.get("entries") if isinstance(data.get("entries"), list) else [data]
+    if not 1 <= len(entries) <= 20:
+        return jsonify({"error": "Send 1 to 20 entries."}), 400
+
+    cleaned = []
+    for i, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            return jsonify({"error": f"Entry {i + 1} must be an object."}), 400
+        entry = {**entry, "hours": None}  # hours only ever come from Glad
+        fields, error = worklog.clean(entry, require_hours=False)
+        if error:
+            return jsonify({"error": f"Entry {i + 1}: {error}"}), 400
+        cleaned.append(fields)
+    ids = [worklog.create(f, status="draft", source="claude") for f in cleaned]
+    return jsonify({"ok": True, "ids": ids, "status": "draft"}), 201
 
 
 # ---------------------------------------------------------------

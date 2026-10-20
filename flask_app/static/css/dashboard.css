@@ -243,6 +243,29 @@ a.btn-ghost { text-decoration: none; display: inline-flex; align-items: center; 
 .tag--client { color: var(--color-accent); border-color: var(--color-accent-dim); background: var(--color-accent-dim); }
 .tag--lab { color: var(--color-info); border-color: var(--color-info-dim); background: var(--color-info-dim); }
 
+/* ---------------- Work log ---------------- */
+.project-row--draft { border-left: 2px solid var(--color-accent); padding-left: var(--space-2); }
+.dash > * { min-width: 0; }  /* let wide tables scroll inside their panel on phones */
+.table-wrap { overflow-x: auto; }
+.week-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.week-table th {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.75rem 0.4rem 0;
+  border-bottom: 0.5px solid var(--color-border);
+  white-space: nowrap;
+}
+.week-table td {
+  padding: 0.45rem 0.75rem 0.45rem 0;
+  border-bottom: 0.5px solid var(--color-border-soft);
+  color: var(--color-text-body);
+  white-space: nowrap;
+}
+.week-ok { color: var(--color-accent); }
+.week-short { color: var(--color-danger); }
+
 /* ---------------- Login page ---------------- */
 .login-body {
   min-height: 100vh;
